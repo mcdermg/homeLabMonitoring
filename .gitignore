@@ -1,0 +1,12 @@
+# Ansible files
+hosts.ini
+.vault_pass
+
+# Vim swap files
+*.swp
+*.swo
+
+# Vagrant
+**/.vagrant
+**/.vagrant/*
+**/.vagrant/**

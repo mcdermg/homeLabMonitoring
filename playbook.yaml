@@ -1,0 +1,11 @@
+---
+- name: Cluster Monitoring
+  hosts: zero
+  become: true
+  vars_files:
+    - vars.yaml
+
+  roles:
+    - { role: apt }
+    - { role: prometheus }
+    - { role: alertmanager }

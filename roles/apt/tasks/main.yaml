@@ -1,0 +1,21 @@
+---
+- name: Apt update
+  ansible.builtin.apt:
+    update-cache: true
+
+- name: Populate installed packages
+  ansible.builtin.package_facts:
+    manager: "auto"
+
+- name: Install prometheus-node-exporter
+  ansible.builtin.apt:
+    name: prometheus-node-exporter
+    state: present
+  when: '"prometheus-node-exporter" not in ansible_facts.packages'
+
+- name: Enable prometheus-node-exporter service
+  ansible.builtin.service:
+    name: prometheus-node-exporter
+    enabled: true
+    state: started
+  when: '"prometheus-node-exporter" not in ansible_facts.packages'

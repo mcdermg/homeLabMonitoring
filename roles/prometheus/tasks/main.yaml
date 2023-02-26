@@ -1,0 +1,22 @@
+---
+- name: Install prometheus
+  ansible.builtin.apt:
+    name: prometheus
+    state: present
+  when: '"prometheus" not in ansible_facts.packages'
+
+- name: Add prometheus config
+  ansible.builtin.template:
+    src: prometheus.yml.js
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: '644'
+  when: '"prometheus" not in ansible_facts.packages'
+
+- name: Enable prometheus service
+  ansible.builtin.service:
+    name: prometheus
+    enabled: true
+    state: restarted
+  when: '"prometheus" not in ansible_facts.packages'

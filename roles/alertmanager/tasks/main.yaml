@@ -1,0 +1,40 @@
+---
+- name: Install alertmanager
+  ansible.builtin.apt:
+    name: prometheus-alertmanager
+    state: present
+  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+
+- name: Add alertmanager config
+  ansible.builtin.template:
+    src: alertmanager.yml.js
+    dest: /etc/prometheus/alertmanager.yml
+    owner: root
+    group: root
+    mode: '644'
+  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+
+- name: Add alerts config
+  ansible.builtin.copy:
+    src: alert.yml
+    dest: /etc/prometheus/alert.yml
+    owner: root
+    group: root
+    mode: '644'
+  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+
+- name: Add message template config
+  ansible.builtin.copy:
+    src: notifications.tmpl
+    dest: /etc/prometheus/notifications.tmpl
+    owner: root
+    group: root
+    mode: '644'
+  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+
+- name: Enable alertmanager service
+  ansible.builtin.service:
+    name: prometheus-alertmanager
+    enabled: true
+    state: restarted
+  when: '"prometheus-alertmanager" not in ansible_facts.packages'
