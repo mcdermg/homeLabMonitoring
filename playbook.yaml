@@ -2,6 +2,9 @@
 - name: Cluster Monitoring
   hosts: zero
   become: true
+  vars:
+    force_prom_config: true
+    force_alert_config: true
   vars_files:
     - vars.yaml
 

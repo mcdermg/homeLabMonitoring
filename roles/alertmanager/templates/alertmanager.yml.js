@@ -8,6 +8,10 @@ receivers:
   slack_configs:
   - channel: '#alerts'
     send_resolved: true
-    icon_url: https://avatars3.githubusercontent.com/u/3380462
+    icon_url: 'https://avatars3.githubusercontent.com/u/3380462'
+    title: {% raw %}'{{ template "slack_title" . }}'{% endraw %}
+
+    text: {% raw %}'{{ template "slack_message" . }}'{% endraw %}
+
 templates:
 - notifications.tmpl

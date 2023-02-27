@@ -1,5 +1,4 @@
 # Ansible files
-hosts.ini
 .vault_pass
 
 # Vim swap files

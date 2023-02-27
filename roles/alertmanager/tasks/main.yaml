@@ -12,16 +12,18 @@
     owner: root
     group: root
     mode: '644'
-  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)
 
 - name: Add alerts config
-  ansible.builtin.copy:
-    src: alert.yml
+  ansible.builtin.template:
+    src: alert.yml.js
     dest: /etc/prometheus/alert.yml
     owner: root
     group: root
     mode: '644'
-  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)
 
 - name: Add message template config
   ansible.builtin.copy:
@@ -30,11 +32,35 @@
     owner: root
     group: root
     mode: '644'
-  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)
 
 - name: Enable alertmanager service
   ansible.builtin.service:
     name: prometheus-alertmanager
     enabled: true
     state: restarted
-  when: '"prometheus-alertmanager" not in ansible_facts.packages'
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)
+
+- name: Check Alertmanager ready
+  uri:
+    url: http://{{ ansible_host }}:9093/-/ready
+    return_content: yes
+  register: prometheus_ready
+  until: prometheus_ready.status == 200 and "OK" in prometheus_ready.content
+  retries: 10
+  delay: 5
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)
+
+- name: Check Alertmanager health
+  uri:
+    url: http://{{ ansible_host }}:9093/-/healthy
+    return_content: yes
+  register: prometheus_health
+  until: prometheus_health.status == 200 and "OK" in prometheus_health.content
+  retries: 5
+  delay: 5
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config == true)

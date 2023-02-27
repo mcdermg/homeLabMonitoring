@@ -12,11 +12,35 @@
     owner: root
     group: root
     mode: '644'
-  when: '"prometheus" not in ansible_facts.packages'
+  when: ("prometheus" not in ansible_facts.packages) or
+        (force_prom_config == true)
 
 - name: Enable prometheus service
   ansible.builtin.service:
     name: prometheus
     enabled: true
     state: restarted
-  when: '"prometheus" not in ansible_facts.packages'
+  when: ("prometheus" not in ansible_facts.packages) or
+        (force_prom_config == true)
+
+- name: Check Prometheus ready
+  uri:
+    url: http://{{ ansible_host }}:9090/-/ready
+    return_content: yes
+  register: prometheus_ready
+  until: prometheus_ready.status == 200 and "Prometheus is Ready." in prometheus_ready.content
+  retries: 10
+  delay: 5
+  when: ("prometheus" not in ansible_facts.packages) or
+        (force_prom_config == true)
+
+- name: Check Prometheus health
+  uri:
+    url: http://{{ ansible_host }}:9090/-/healthy
+    return_content: yes
+  register: prometheus_health
+  until: prometheus_health.status == 200 and "Prometheus is Healthy." in prometheus_health.content
+  retries: 5
+  delay: 5
+  when: ("prometheus" not in ansible_facts.packages) or
+        (force_prom_config == true)

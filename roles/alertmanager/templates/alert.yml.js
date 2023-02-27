@@ -7,9 +7,12 @@ groups:
       severity: 'critical'
     annotations:
       title: "Disk Usage"
-      description: 'Partition : {{$labels.mountpoint}}'
-      summary: "Disk usage is `{{humanize $value}}%`"
-      host: "{{$labels.instance}}"
+      description: {% raw %}'Partition : {{$labels.mountpoint}}'{% endraw %}
+
+      summary: {% raw %}"Disk usage is `{{humanize $value}}%`"{% endraw %}
+
+      host: {% raw %}"{{$labels.instance}}"{% endraw %}
+
 
 - name: Memory-usage
   rules:
@@ -20,16 +23,22 @@ groups:
     annotations:
       title: "Memory Usage"
       description: 'Memory usage threshold set to `80%`.'
-      summary: "Memory usage is `{{humanize $value}}%`"
-      host: "{{$labels.instance}}"
+      summary: {% raw %}"Memory usage is `{{humanize $value}}%`"{% endraw %}
+
+      host: {% raw %}"{{$labels.instance}}"{% endraw %}
+
 
 - name: Hardware alerts
   rules:
   - alert: Node down
-    expr: up{job="pi-nodes"} == 0
-    for: 1m
+    expr: {% raw %}up{job="pi-nodes"} == 0{% endraw %}
+    
+    for: 5m
     labels:
       severity: critical
+      alertmanager: {{ ansible_hostname | upper }}
     annotations:
-      title: Node {{ $labels.instance }} is down
-      description: Failed to scrape {{ $labels.job }} on {{ $labels.instance }} for 1 minute. Node seems down, please check.
+      title: Node {% raw %}{{ $labels.instance }} is down{% endraw %}
+
+      description: FAILED to scrape {% raw %}{{ $labels.job }} on {{ $labels.instance }} for 5 minutes. Node seems down, please check it ASAP.{% endraw %}
+
