@@ -14,4 +14,4 @@ ansible-playbook playbook.yaml --limit zero-2
 ```
 ### Slack
 
-AlertManager is set to send alerts to slack via a hook. This is in the encrypted `vars.yaml`. This sSlack application can be accessed [here](https://api.slack.com/apps/A03N9CZGHEX/install-on-team?).
+AlertManager is set to send alerts to slack via a hook. This is in the encrypted `vars.yaml`. This Slack application can be accessed [here](https://api.slack.com/apps/A03N9CZGHEX/install-on-team?).
