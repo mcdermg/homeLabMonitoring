@@ -1,0 +1,101 @@
+---
+- name: Check if the gatus directory exists
+  ansible.builtin.stat:
+    path: /home/pi/repos/gatus
+  register: gatus_dir_check
+
+- name: Create the directory
+  ansible.builtin.file:
+    path: /home/pi/repos/gatus
+    state: directory
+    owner: pi
+    group: pi
+    mode: '0644'
+  when: not gatus_dir_check.stat.exists
+
+- name: Create the config directory
+  ansible.builtin.file:
+    path: /home/pi/repos/gatus/config
+    state: directory
+    owner: pi
+    group: pi
+    mode: '0644'
+  when: not gatus_dir_check.stat.exists
+
+- name: Create the data directory
+  ansible.builtin.file:
+    path: /home/pi/repos/gatus/data
+    state: directory
+    owner: pi
+    group: pi
+    mode: '0644'
+  when: not gatus_dir_check.stat.exists
+
+# # URL not working Gatus repo needs release or something in GH so get a reliable URL
+# - name: Download Gatus artifact
+#   ansible.builtin.get_url:
+#     url: 'https://github.com/Celestial-Industries/gatus/suites/18700159074/artifacts/1088420253'
+#     dest: '/home/pi/repos/gatus/gatus'
+#     owner: pi
+#     group: pi
+#     mode: '644'
+#   when: (force_gatus_config == true)
+
+- name: Copy Gatus artifact zip
+  ansible.builtin.copy:
+    src: gatus-linux-arm.zip
+    dest: /tmp/gatus-linux-arm.zip
+    owner: pi
+    group: pi
+    mode: '0644'
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")
+
+- name: Unarchive Gatus artifact
+  ansible.builtin.unarchive:
+    src: /tmp/gatus-linux-arm.zip
+    dest: /home/pi/repos/gatus/
+    owner: pi
+    group: pi
+    mode: '0755'
+    remote_src: yes
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")
+
+- name: Add Gatus config
+  ansible.builtin.template:
+    src: config.yaml.js
+    dest: /home/pi/repos/gatus/config/config.yaml
+    owner: pi
+    group: pi
+    mode: '644'
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")
+
+- name: Create Gatus systemd service file
+  template:
+    src: gatus_service.js
+    dest: /etc/systemd/system/gatus.service
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")
+  notify: Reload systemd
+
+- name: Start the service
+  systemd:
+    name: gatus.service
+    state: started
+    enabled: yes
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")
+  notify: Reload systemd
+
+- name: Check Gatus health status
+  uri:
+    url: http://{{ ansible_host }}:80/health
+    return_content: yes
+  register: gatus_health
+  until: gatus_health.status == 200 and "UP" in gatus_health.content
+  retries: 5
+  delay: 5
+  when: ("not gatus_dir_check.stat.exists") or
+        ("force_gatus_config == true")

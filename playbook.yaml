@@ -3,8 +3,9 @@
   hosts: zero
   become: true
   vars:
-    force_prom_config: true
-    force_alert_config: true
+    force_prom_config: false
+    force_alert_config: false
+    force_gatus_config: false
   vars_files:
     - vars.yaml
 
@@ -12,3 +13,4 @@
     - { role: apt }
     - { role: prometheus }
     - { role: alertmanager }
+    - { role: gatus }
