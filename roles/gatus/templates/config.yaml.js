@@ -24,7 +24,8 @@ alerting:
             send-on-resolved: true
             failure-threshold: 3
             success-threshold: 3
-default-endpoint:
+
+default-endpoint: &defaults
     group: Websites
     interval: 15m
     alerts:
@@ -32,10 +33,10 @@ default-endpoint:
     conditions:
         - '[STATUS] == 200'
         - '[RESPONSE_TIME] < 1000'
-        # 5 min minimum
-        - '[DOMAIN_EXPIRATION] > 720h'
+        - '[DOMAIN_EXPIRATION] > 720h' # 5 min minimum
         - '[CERTIFICATE_EXPIRATION] > 240h'
-internal-endpoint:
+
+internal-endpoint: &internal
     group: Cluster
     interval: 5m
     alerts:
@@ -43,67 +44,76 @@ internal-endpoint:
     conditions:
         - '[CONNECTED] == true'
         - '[RESPONSE_TIME] < 200'
+
 endpoints:
     - name: garymcdermott
-      !!merge <<:
-        group: Websites
-        interval: 15m
-        alerts:
-            - type: slack
-        conditions:
-            - '[STATUS] == 200'
-            - '[RESPONSE_TIME] < 1000'
-            - '[DOMAIN_EXPIRATION] > 720h' # 5 min minimum
-            - '[CERTIFICATE_EXPIRATION] > 240h'
+      <<: *defaults
+      conditions:
+        - '[RESPONSE_TIME] < 4000' # Some issue on the zero with the inital connections being very latent
       url: https://www.garymcdermott.net
+
     - name: Telecentro
-      !!merge <<:
-        group: Cluster
-        interval: 5m
-        alerts:
-            - type: slack
-        conditions:
-            - '[CONNECTED] == true'
-            - '[RESPONSE_TIME] < 200'
+      <<: *internal
       group: Network
       url: icmp://192.168.0.1
+
     - name: control
-      !!merge <<:
-        group: Cluster
-        interval: 5m
-        alerts:
-            - type: slack
-        conditions:
-            - '[CONNECTED] == true'
-            - '[RESPONSE_TIME] < 200'
+      <<: *internal
       url: icmp://192.168.0.66
     - name: node-1
-      !!merge <<:
-        group: Cluster
-        interval: 5m
-        alerts:
-            - type: slack
-        conditions:
-            - '[CONNECTED] == true'
-            - '[RESPONSE_TIME] < 200'
-      url: icmp://192.168.0.65
+      <<: *internal
+      url: icmp://192.168.0.65    
     - name: node-2
-      !!merge <<:
-        group: Cluster
-        interval: 5m
-        alerts:
-            - type: slack
-        conditions:
-            - '[CONNECTED] == true'
-            - '[RESPONSE_TIME] < 200'
-      url: icmp://192.168.0.64
+      <<: *internal
+      url: icmp://192.168.0.64    
     - name: node-3
-      !!merge <<:
-        group: Cluster
-        interval: 5m
-        alerts:
-            - type: slack
-        conditions:
-            - '[CONNECTED] == true'
-            - '[RESPONSE_TIME] < 200'
+      <<: *internal
       url: icmp://192.168.0.63
+
+    - name: Deployment-test-service
+      <<: *internal
+      group: Services
+      url: "http://192.168.0.241"
+      conditions:
+        - "[STATUS] == 200"
+        - "[RESPONSE_TIME] < 1000"      
+
+    - name: Grafana-service
+      <<: *internal
+      group: Services
+      url: "http://192.168.0.242/api/health"
+      conditions:
+        - "[STATUS] == 200"
+        - "[RESPONSE_TIME] < 1000"
+        - "[BODY].database == ok"
+
+    - name: Prometheus-service
+      <<: *internal
+      group: Services
+      url: "http://192.168.0.243/-/healthy"
+      conditions:
+        - "[STATUS] == 200"
+        - "[RESPONSE_TIME] < 1000"
+        - "[BODY] == Prometheus is Healthy."
+  
+    - name: Telegraf
+      <<: *internal
+      group: Services
+      url: "http://192.168.0.66:9283/metrics"
+
+    - name: Heimdall
+      <<: *internal
+      group: Services
+      url: "http://192.168.0.66:8080"
+
+#    - name: mosquitto
+#      url: "tcp://192.168.0.35:1883"
+#      interval: 30s
+#      conditions: 
+#        - "[CONNECTED] == true"
+
+#    - name: sensor-01
+#      <<: *internal
+#      group: Sensors
+#      url: icmp://192.168.0.81
+#      interval: 60s

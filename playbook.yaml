@@ -10,7 +10,7 @@
     - vars.yaml
 
   roles:
-    - { role: apt }
-    - { role: prometheus }
-    - { role: alertmanager }
-    - { role: gatus }
+    - { role: apt, tags: apt }
+    - { role: prometheus, tags: prometheus }
+    - { role: alertmanager, tags: alertmanager }
+    - { role: gatus, tags: gatus }

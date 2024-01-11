@@ -31,3 +31,7 @@ scrape_configs:
   - job_name: pi-nodes
     static_configs:
       - targets: [{{ HOSTS }}]
+  - job_name: "ispmonitor"
+    scrape_interval: 120s
+    static_configs:
+      - targets: [{{ TELEGRAF_HOST }}] # RPi Telegraf agent

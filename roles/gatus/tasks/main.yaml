@@ -48,8 +48,7 @@
     owner: pi
     group: pi
     mode: '0644'
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
+  when: not gatus_dir_check.stat.exists
 
 - name: Unarchive Gatus artifact
   ansible.builtin.unarchive:
@@ -58,9 +57,8 @@
     owner: pi
     group: pi
     mode: '0755'
-    remote_src: yes
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
+    remote_src: true
+  when: not gatus_dir_check.stat.exists
 
 - name: Add Gatus config
   ansible.builtin.template:
@@ -70,32 +68,41 @@
     group: pi
     mode: '644'
   when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
+        ("force_gatus_config")
 
 - name: Create Gatus systemd service file
-  template:
+  ansible.builtin.template:
     src: gatus_service.js
     dest: /etc/systemd/system/gatus.service
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
+    mode: '0644'
+  when: not gatus_dir_check.stat.exists
   notify: Reload systemd
 
 - name: Start the service
-  systemd:
+  ansible.builtin.systemd:
     name: gatus.service
     state: started
-    enabled: yes
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
+    enabled: true
+  when: not gatus_dir_check.stat.exists
   notify: Reload systemd
 
+- name: Gather facts about Gatus services
+  ansible.builtin.service_facts:
+    services:
+      - gatus.service
+  when: force_gatus_config
+
+- name: Restart Gatus service
+  ansible.builtin.service:
+    name: gatus.service
+    state: restarted
+  when: force_gatus_config
+
 - name: Check Gatus health status
-  uri:
+  ansible.builtin.uri:
     url: http://{{ ansible_host }}:80/health
-    return_content: yes
+    return_content: true
   register: gatus_health
   until: gatus_health.status == 200 and "UP" in gatus_health.content
   retries: 5
   delay: 5
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config == true")
