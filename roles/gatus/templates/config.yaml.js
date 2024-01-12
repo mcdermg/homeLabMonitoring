@@ -105,6 +105,8 @@ endpoints:
       <<: *internal
       group: Services
       url: "http://192.168.0.66:8080"
+      conditions:
+        - "[RESPONSE_TIME] < 1000" # More time needed as not responsive for some reason
 
 #    - name: mosquitto
 #      url: "tcp://192.168.0.35:1883"

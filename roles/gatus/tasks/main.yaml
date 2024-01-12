@@ -88,8 +88,6 @@
 
 - name: Gather facts about Gatus services
   ansible.builtin.service_facts:
-    services:
-      - gatus.service
   when: force_gatus_config
 
 - name: Restart Gatus service
