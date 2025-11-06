@@ -18,7 +18,7 @@ ui:
           link: https://www.linkedin.com/in/garymcdermott
 alerting:
     slack:
-        webhook-url: {{ GATUS_SLACK_HOOK }}
+        webhook-url:  {{ GATUS_SLACK_HOOK }}
         default-alert:
             description: Healthcheck failed 3 times in a row
             send-on-resolved: true
@@ -46,76 +46,99 @@ internal-endpoint: &internal
         - '[RESPONSE_TIME] < 200'
 
 endpoints:
-    - name: garymcdermott
-      <<: *defaults
-      conditions:
-        - '[RESPONSE_TIME] < 4000' # Some issue on the zero with the inital connections being very latent
-      url: https://www.garymcdermott.net
-
     - name: Telecentro
       <<: *internal
-      group: Network
+      group: "1. Network"
       url: icmp://192.168.0.1
 
-    - name: control
+    - name: "Mikrotick WAN"
       <<: *internal
-      url: icmp://192.168.0.66
-    - name: node-1
-      <<: *internal
-      url: icmp://192.168.0.65    
-    - name: node-2
-      <<: *internal
-      url: icmp://192.168.0.64    
-    - name: node-3
-      <<: *internal
-      url: icmp://192.168.0.63
+      group: "1. Network"
+      url: icmp://192.168.0.98
 
-    - name: Deployment-test-service
+    - name: "Mikrotick LAN"
       <<: *internal
-      group: Services
-      url: "http://192.168.0.241"
+      group: "1. Network"
+      url: icmp://192.168.1.1
+
+    - name: "TL-SG105PE Switch"
+      <<: *internal
+      group: "1. Network"
+      url: icmp://192.168.1.253
+
+    - name: Proxmox Server
+      <<: *internal
+      group: "2. Proxmox"
+      url: icmp://192.168.1.250
+
+    - name: "Pi4 Control 01"
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.252
+
+    - name: k3s-control-tf-01
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.210 
+
+    - name: k3s-control-tf-02
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.211    
+
+    - name: "P3 Node-1"
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.251
+
+    - name: k3s-node-tf-01
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.215
+
+    - name: k3s-node-tf-02
+      <<: *internal
+      group: "3. Cluster"
+      url: icmp://192.168.1.216
+
+    - name: k8status
+      <<: *internal
+      group: "4. Services"
+      url: "http://192.168.1.11/"
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"      
 
-    - name: Grafana-service
+    - name: Nginx
       <<: *internal
-      group: Services
-      url: "http://192.168.0.242/api/health"
+      group: "4. Services"
+      url: "http://192.168.1.12/"
       conditions:
         - "[STATUS] == 200"
-        - "[RESPONSE_TIME] < 1000"
-        - "[BODY].database == ok"
+        - "[RESPONSE_TIME] < 1000"      
 
-    - name: Prometheus-service
-      <<: *internal
-      group: Services
-      url: "http://192.168.0.243/-/healthy"
+    - name: garymcdermott
+      <<: *defaults
+      group: "5. External"
       conditions:
-        - "[STATUS] == 200"
-        - "[RESPONSE_TIME] < 1000"
-        - "[BODY] == Prometheus is Healthy."
-  
-    - name: Telegraf
-      <<: *internal
-      group: Services
-      url: "http://192.168.0.66:9283/metrics"
+        - '[RESPONSE_TIME] < 4000' # Some issue on the zero with the inital connections being very latent
+      url: https://www.garymcdermott.net
 
-    - name: Heimdall
-      <<: *internal
-      group: Services
-      url: "http://192.168.0.66:8080"
-      conditions:
-        - "[RESPONSE_TIME] < 1000" # More time needed as not responsive for some reason
-
-#    - name: mosquitto
-#      url: "tcp://192.168.0.35:1883"
-#      interval: 30s
-#      conditions: 
-#        - "[CONNECTED] == true"
-
-#    - name: sensor-01
+#    - name: Grafana-service
 #      <<: *internal
-#      group: Sensors
-#      url: icmp://192.168.0.81
-#      interval: 60s
+#      group: Services
+#      url: "http://192.168.0.242/api/health"
+#      conditions:
+#        - "[STATUS] == 200"
+#        - "[RESPONSE_TIME] < 1000"
+#        - "[BODY].database == ok"
+#
+#    - name: Prometheus-service
+#      <<: *internal
+#      group: Services
+#      url: "http://192.168.0.243/-/healthy"
+#      conditions:
+#        - "[STATUS] == 200"
+#        - "[RESPONSE_TIME] < 1000"
+#        - "[BODY] == Prometheus is Healthy."
+
