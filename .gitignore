@@ -9,3 +9,6 @@
 **/.vagrant
 **/.vagrant/*
 **/.vagrant/**
+
+# VSCode etc
+.vscode/
