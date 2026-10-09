@@ -64,17 +64,22 @@ endpoints:
     - name: "TL-SG105PE Switch"
       <<: *internal
       group: "1. Network"
-      url: icmp://192.168.1.253
+      url: icmp://192.168.1.254
 
-    - name: Proxmox Server
+    - name: pve01
       <<: *internal
       group: "2. Proxmox"
       url: icmp://192.168.1.250
 
+    - name: pve02
+      <<: *internal
+      group: "2. Proxmox"
+      url: icmp://192.168.1.251
+
     - name: "Pi4 Control 01"
       <<: *internal
       group: "3. Cluster"
-      url: icmp://192.168.1.252
+      url: icmp://192.168.1.241
 
     - name: k3s-control-tf-01
       <<: *internal
@@ -86,10 +91,10 @@ endpoints:
       group: "3. Cluster"
       url: icmp://192.168.1.211    
 
-    - name: "P3 Node-1"
+    - name: "Pi3 Node-1"
       <<: *internal
       group: "3. Cluster"
-      url: icmp://192.168.1.251
+      url: icmp://192.168.1.242
 
     - name: k3s-node-tf-01
       <<: *internal
