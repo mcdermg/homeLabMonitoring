@@ -67,8 +67,7 @@
     owner: pi
     group: pi
     mode: '644'
-  when: ("not gatus_dir_check.stat.exists") or
-        ("force_gatus_config")
+  when: not gatus_dir_check.stat.exists or force_gatus_config
 
 - name: Create Gatus systemd service file
   ansible.builtin.template:

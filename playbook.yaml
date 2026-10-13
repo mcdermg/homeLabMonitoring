@@ -2,6 +2,7 @@
 - name: Cluster Monitoring
   hosts: zero
   become: true
+  gather_facts: false
   vars:
     force_prom_config: false
     force_alert_config: false
@@ -9,8 +10,32 @@
   vars_files:
     - vars.yaml
 
+  # The ssh role moves sshd to 2222, so connect on 2222 if it's open and fall back to 22 on a fresh Pi
+  pre_tasks:
+    - name: Check if SSH is on port 2222
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host | default(inventory_hostname) }}"
+        port: 2222
+        timeout: 5
+      delegate_to: localhost
+      become: false
+      check_mode: false
+      ignore_errors: true
+      register: ssh_port_check
+      tags: always
+
+    - name: Use the open SSH port
+      ansible.builtin.set_fact:
+        ansible_port: "{{ 2222 if ssh_port_check is succeeded else 22 }}"
+      tags: always
+
+    - name: Gather facts
+      ansible.builtin.setup:
+      tags: always
+
   roles:
     - { role: apt, tags: apt }
     - { role: prometheus, tags: prometheus }
     - { role: alertmanager, tags: alertmanager }
     - { role: gatus, tags: gatus }
+    - { role: ssh, tags: ssh }

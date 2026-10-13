@@ -44,3 +44,7 @@ Gatus is the status dashboard, served on port 80 of the Zero. It checks the ISP 
 - Alerts go to Slack via `GATUS_SLACK_HOOK` in the encrypted `vars.yaml`.
 
 To push a config change, set `force_gatus_config: true` and run the playbook with `--tags "gatus"`.
+
+## SSH
+
+The `ssh` role moves sshd to port 2222. The Proxmox nodes use 2222 as their default SSH port, and `pvecm qdevice setup` has no port option, so the Zero has to match to act as the QDevice. The playbook checks whether 2222 is open before gathering facts and connects on 22 if it isn't, so the same command works on a fresh Pi and after the move. Don't pass `-e ansible_port=...`: extra vars override that check.

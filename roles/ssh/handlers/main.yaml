@@ -1,0 +1,17 @@
+---
+# Fire and forget: sshd comes back on the new port, so Ansible can't reconnect on the old one to collect a result
+- name: Restart ssh
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  async: 60
+  poll: 0
+
+- name: Check SSH is on port 2222
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host | default(inventory_hostname) }}"
+    port: 2222
+    timeout: 30
+  delegate_to: localhost
+  become: false
+  listen: Restart ssh
