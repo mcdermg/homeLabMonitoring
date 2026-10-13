@@ -1,0 +1,8 @@
+---
+- name: Set the SSH port
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?Port '
+    line: 'Port 2222'
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Restart ssh
