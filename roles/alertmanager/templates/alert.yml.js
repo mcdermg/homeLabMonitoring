@@ -32,7 +32,7 @@ groups:
   rules:
   - alert: Node down
     expr: {% raw %}up{job="pi-nodes"} == 0{% endraw %}
-    
+
     for: 5m
     labels:
       severity: critical
@@ -41,4 +41,3 @@ groups:
       title: Node {% raw %}{{ $labels.instance }} is down{% endraw %}
 
       description: FAILED to scrape {% raw %}{{ $labels.job }} on {{ $labels.instance }} for 5 minutes. Node seems down, please check it ASAP.{% endraw %}
-

@@ -13,7 +13,7 @@
 {{- end }}
 {{ define "slack_message" }}
      {{ range .Alerts -}}
-     
+
      *AlertManagerInstance:* {{ if .Labels.alertmanager }} - `{{ .Labels.alertmanager }}`{{ end }}
 
      *Alert:* {{ .Annotations.title }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}

@@ -13,7 +13,7 @@
     group: root
     mode: '644'
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)
 
 - name: Add alerts config
   ansible.builtin.template:
@@ -23,7 +23,7 @@
     group: root
     mode: '644'
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)
 
 - name: Add message template config
   ansible.builtin.copy:
@@ -33,7 +33,7 @@
     group: root
     mode: '644'
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)
 
 - name: Enable alertmanager service
   ansible.builtin.service:
@@ -41,26 +41,26 @@
     enabled: true
     state: restarted
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)
 
 - name: Check Alertmanager ready
-  uri:
+  ansible.builtin.uri:
     url: http://{{ ansible_host }}:9093/-/ready
-    return_content: yes
-  register: prometheus_ready
-  until: prometheus_ready.status == 200 and "OK" in prometheus_ready.content
+    return_content: true
+  register: alertmanager_ready
+  until: alertmanager_ready.status == 200 and "OK" in alertmanager_ready.content
   retries: 10
   delay: 5
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)
 
 - name: Check Alertmanager health
-  uri:
+  ansible.builtin.uri:
     url: http://{{ ansible_host }}:9093/-/healthy
-    return_content: yes
-  register: prometheus_health
-  until: prometheus_health.status == 200 and "OK" in prometheus_health.content
+    return_content: true
+  register: alertmanager_health
+  until: alertmanager_health.status == 200 and "OK" in alertmanager_health.content
   retries: 5
   delay: 5
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
-        (force_alert_config == true)
+        (force_alert_config | bool)

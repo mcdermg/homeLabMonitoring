@@ -84,12 +84,12 @@ endpoints:
     - name: k3s-control-tf-01
       <<: *internal
       group: "3. Cluster"
-      url: icmp://192.168.1.210 
+      url: icmp://192.168.1.210
 
     - name: k3s-control-tf-02
       <<: *internal
       group: "3. Cluster"
-      url: icmp://192.168.1.211    
+      url: icmp://192.168.1.211
 
     - name: "Pi3 Node-1"
       <<: *internal
@@ -112,7 +112,7 @@ endpoints:
       url: "http://192.168.1.11/"
       conditions:
         - "[STATUS] == 200"
-        - "[RESPONSE_TIME] < 1000"      
+        - "[RESPONSE_TIME] < 1000"
 
     - name: Nginx
       <<: *internal
@@ -120,7 +120,7 @@ endpoints:
       url: "http://192.168.1.12/"
       conditions:
         - "[STATUS] == 200"
-        - "[RESPONSE_TIME] < 1000"      
+        - "[RESPONSE_TIME] < 1000"
 
     - name: garymcdermott
       <<: *defaults
@@ -146,4 +146,3 @@ endpoints:
 #        - "[STATUS] == 200"
 #        - "[RESPONSE_TIME] < 1000"
 #        - "[BODY] == Prometheus is Healthy."
-
