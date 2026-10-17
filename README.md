@@ -4,7 +4,7 @@ Ansible playbook &amp; roles for the monitoring setup on the Pi Zero. Originally
 This will update apt, populate packages and then install Prometheus & associated config, AlertManager & associated config, and Gatus.
 
 ## Config
-At the minute the configs are fairly static except the Slack hooks. Hosts and some other vars in the various config files are set via vars values. The `vars.yaml` is encrypted via Ansible-vault.
+At the minute the configs are fairly static. Scrape targets are set in the templates; `vars.yaml` (encrypted via Ansible-vault) only holds the Slack hooks, scrape/evaluation intervals and the rule file name.
 
 ### Target single Hosts
 Via ansible:
@@ -32,6 +32,31 @@ All are booleans and steps in their roles have conditionals. It's focused on for
 ### Slack
 
 AlertManager is set to send alerts to Slack via a hook. This is in the encrypted `vars.yaml`. This Slack application can be accessed [here](https://api.slack.com/apps/A03N9CZGHEX/install-on-team?).
+
+## Prometheus
+
+Prometheus runs on port 9090 of the Zero. The Zero is the external monitor: it sits on the ISP network, outside the lab, so it keeps scraping and alerting when the lab is down. The k3s cluster has its own Prometheus and Grafana for the internal view, and that Grafana uses this Prometheus as a data source for the ISP dashboard.
+
+Jobs, from `roles/prometheus/templates/prometheus.yml.js`:
+
+| Job | Scrapes | Notes |
+| --- | ------- | ----- |
+| `prometheus` | `localhost:9090` | Prometheus itself |
+| `node` | `localhost:9100` | The Zero's own node_exporter |
+| `pi-nodes` | `192.168.1.242:9100` (Pi 3) | Lab node_exporters. Feeds the `Node down`, disk and memory alerts, so only add a host once it answers on 9100 |
+| `blackbox-icmp-poc` | Ping to 8 sites (`1.1.1.1`, `bbc.com`, `rte.ie`, ...) | Via Blackbox |
+| `blackbox-dns-poc` | DNS query to `1.1.1.1`, `8.8.8.8`, `9.9.9.9`, `192.168.0.1` | Via Blackbox. The `dns` prober queries the target as a resolver, so targets must be DNS servers |
+| `isp-download` | 100 MB download from CacheFly and OVH, every 3 h | Via Blackbox, for ISP throughput |
+
+The Blackbox jobs call the `monitor_isp` Blackbox Exporter container on the MikroTik at `192.168.1.249:9115` (set once at the top of the template). Its modules (`icmp_ipv4`, `dns_tcp`, `http_download`) are defined in `blackbox.yaml` in the `Celestial-Industries/monitor_isp` repo. The `blackbox-*-poc` job names match that repo's `blackbox-dashboard.json`, so don't rename them without updating the dashboard.
+
+The Zero reaches the lab through its `trusted_devices` entry in the `mikrotik-hapac2` firewall; there is no separate rule for 9115 or 9100.
+
+To push a config change:
+
+``` bash
+ansible-playbook playbook.yaml --limit zero-2 --tags prometheus -e force_prom_config=true
+```
 
 ## Gatus
 
