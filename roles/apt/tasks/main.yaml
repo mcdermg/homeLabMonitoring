@@ -3,6 +3,8 @@
   ansible.builtin.apt:
     update-cache: true
 
+# The prometheus and alertmanager roles read ansible_facts.packages, so this also runs with their tags
 - name: Populate installed packages
   ansible.builtin.package_facts:
     manager: "auto"
+  tags: [prometheus, alertmanager]

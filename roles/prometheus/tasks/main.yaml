@@ -13,7 +13,7 @@
     group: root
     mode: '644'
   when: ("prometheus" not in ansible_facts.packages) or
-        (force_prom_config)
+        (force_prom_config | bool)
 
 - name: Enable prometheus service
   ansible.builtin.service:
@@ -21,7 +21,7 @@
     enabled: true
     state: restarted
   when: ("prometheus" not in ansible_facts.packages) or
-        (force_prom_config)
+        (force_prom_config | bool)
 
 - name: Check Prometheus ready
   ansible.builtin.uri:
