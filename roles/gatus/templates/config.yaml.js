@@ -51,12 +51,12 @@ endpoints:
       group: "1. Network"
       url: icmp://192.168.0.1
 
-    - name: "Mikrotick WAN"
+    - name: "MikroTik WAN"
       <<: *internal
       group: "1. Network"
       url: icmp://192.168.0.98
 
-    - name: "Mikrotick LAN"
+    - name: "MikroTik LAN"
       <<: *internal
       group: "1. Network"
       url: icmp://192.168.1.1
@@ -76,32 +76,32 @@ endpoints:
       group: "2. Proxmox"
       url: icmp://192.168.1.251
 
-    - name: "Pi4 Control 01"
+    - name: pi-control
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.241
 
-    - name: k3s-control-tf-01
+    - name: k3s-control-01
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.210
 
-    - name: k3s-control-tf-02
+    - name: k3s-control-02
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.211
 
-    - name: "Pi3 Node-1"
+    - name: pi-worker
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.242
 
-    - name: k3s-node-tf-01
+    - name: k3s-worker-01
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.215
 
-    - name: k3s-node-tf-02
+    - name: k3s-worker-02
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.216
@@ -114,7 +114,7 @@ endpoints:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"
 
-    - name: Nginx
+    - name: Nginx Web Server
       <<: *internal
       group: "4. Services"
       url: "http://192.168.1.12/"
