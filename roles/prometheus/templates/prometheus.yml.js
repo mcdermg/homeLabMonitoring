@@ -35,3 +35,20 @@ scrape_configs:
     scrape_interval: 120s
     static_configs:
       - targets: [{{ TELEGRAF_HOST }}] # RPi Telegraf agent
+  - job_name: "isp-download"
+    scrape_interval: 3h
+    scrape_timeout: 60s
+    metrics_path: /probe
+    params:
+      module: [http_download]
+    static_configs:
+      - targets:
+          - http://cachefly.cachefly.net/100mb.test
+          - https://proof.ovh.net/files/100Mb.dat
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 192.168.1.249:9115 # monitor_isp Blackbox container
