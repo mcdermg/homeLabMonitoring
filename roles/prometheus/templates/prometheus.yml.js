@@ -68,7 +68,7 @@ scrape_configs:
           - 192.168.0.1
     relabel_configs: *blackbox_relabel
   - job_name: "isp-download"
-    scrape_interval: 3h
+    scrape_interval: 2h
     scrape_timeout: 60s
     metrics_path: /probe
     params:
@@ -76,5 +76,5 @@ scrape_configs:
     static_configs:
       - targets:
           - http://cachefly.cachefly.net/100mb.test
-          - https://proof.ovh.net/files/100Mb.dat
+          - http://mirror.sitsa.com.ar/debian/dists/stable/main/Contents-all.gz
     relabel_configs: *blackbox_relabel
