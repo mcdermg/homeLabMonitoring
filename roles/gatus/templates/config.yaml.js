@@ -76,52 +76,52 @@ endpoints:
       group: "2. Proxmox"
       url: icmp://192.168.1.251
 
-    - name: Pi4 Control
+    - name: Control - Pi4
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.241
 
-    - name: k3s Control 01
+    - name: Control - k3s 01
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.210
 
-    - name: k3s Control 02
+    - name: Control - k3s 02
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.211
 
-    - name: Pi3 Worker
+    - name: Worker - Pi3
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.242
 
-    - name: k3s Worker 01
+    - name: Worker - k3s 01
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.215
 
-    - name: k3s Worker 02
+    - name: Worker - k3s 02
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.216
 
-    - name: k3s Worker 03
+    - name: Worker - k3s 03
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.217
 
-    - name: k3s Worker 04
+    - name: Worker - k3s 04
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.218
 
-    - name: k3s Worker 05
+    - name: Worker - k3s 05
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.219
 
-    - name: k3s Worker 06
+    - name: Worker - k3s 06
       <<: *internal
       group: "3. Cluster"
       url: icmp://192.168.1.220
@@ -145,7 +145,7 @@ endpoints:
     - name: LibreSpeed
       <<: *internal
       group: "4. Services"
-      url: "http://192.168.1.111/"
+      url: "http://192.168.1.111:8080/"
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"
@@ -153,10 +153,11 @@ endpoints:
     - name: Pulse
       <<: *internal
       group: "4. Services"
-      url: "http://192.168.1.112/"
+      url: "http://192.168.1.112:7655/api/health"
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"
+        - "[BODY].status == healthy"
 
     - name: Cloudflared
       <<: *internal
@@ -190,8 +191,8 @@ endpoints:
 
     - name: Grafana-service
       <<: *internal
-      group: Services
-      url: "http://192.168.0.242/api/health"
+      group: "4. Services"
+      url: "http://192.168.1.14/api/health"
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"
@@ -199,8 +200,8 @@ endpoints:
 
     - name: Prometheus-service
       <<: *internal
-      group: Services
-      url: "http://192.168.0.243/-/healthy"
+      group: "4. Services"
+      url: "http://192.168.1.15/-/healthy"
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"

@@ -67,7 +67,7 @@
     owner: pi
     group: pi
     mode: '644'
-  when: not gatus_dir_check.stat.exists or force_gatus_config
+  when: not gatus_dir_check.stat.exists or force_gatus_config | bool
 
 - name: Create Gatus systemd service file
   ansible.builtin.template:
@@ -87,13 +87,13 @@
 
 - name: Gather facts about Gatus services
   ansible.builtin.service_facts:
-  when: force_gatus_config
+  when: force_gatus_config | bool
 
 - name: Restart Gatus service
   ansible.builtin.service:
     name: gatus.service
     state: restarted
-  when: force_gatus_config
+  when: force_gatus_config | bool
 
 - name: Check Gatus health status
   ansible.builtin.uri:
