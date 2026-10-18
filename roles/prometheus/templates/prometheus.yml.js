@@ -31,8 +31,8 @@ scrape_configs:
       - targets: ['localhost:9100']
   - job_name: pi-nodes
     static_configs:
-      # Pi 3; the Pi 4 (192.168.1.241) has no node_exporter yet and would trip the Node down alert
-      - targets: ['192.168.1.242:9100']
+      # Physical lab hosts only (LAB-90): pve01, pve02, Pi 4, Pi 3. The k3s Prometheus scrapes the VMs
+      - targets: ['192.168.1.250:9100', '192.168.1.251:9100', '192.168.1.241:9100', '192.168.1.242:9100']
   # job names match blackbox-dashboard.json in the monitor_isp repo
   - job_name: "blackbox-icmp-poc"
     metrics_path: /probe

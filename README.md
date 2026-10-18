@@ -43,7 +43,7 @@ Jobs, from `roles/prometheus/templates/prometheus.yml.js`:
 | --- | ------- | ----- |
 | `prometheus` | `localhost:9090` | Prometheus itself |
 | `node` | `localhost:9100` | The Zero's own node_exporter |
-| `pi-nodes` | `192.168.1.242:9100` (Pi 3) | Lab node_exporters. Feeds the `Node down`, disk and memory alerts, so only add a host once it answers on 9100 |
+| `pi-nodes` | `192.168.1.250`, `.251` (pve01, pve02), `.241` (Pi 4), `.242` (Pi 3), all `:9100` | Lab node_exporters. Feeds the `Node down`, disk and memory alerts, so only add a host once it answers on 9100 |
 | `blackbox-icmp-poc` | Ping to 8 sites (`1.1.1.1`, `bbc.com`, `rte.ie`, ...) | Via Blackbox |
 | `blackbox-dns-poc` | DNS query to `1.1.1.1`, `8.8.8.8`, `9.9.9.9`, `192.168.0.1` | Via Blackbox. The `dns` prober queries the target as a resolver, so targets must be DNS servers |
 | `isp-download` | 100 MiB download from CacheFly and a 38 MB file from the SiTSA mirror (Argentina), every 2 h | Via Blackbox, for ISP throughput. A single stream from a far server (e.g. OVH, ~246 ms) reads far below the line, so targets must be nearby |
