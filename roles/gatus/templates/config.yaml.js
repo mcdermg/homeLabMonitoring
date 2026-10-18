@@ -176,6 +176,20 @@ endpoints:
         - "[DNS_RCODE] == NOERROR"
         - "[BODY] == 192.168.1.250"
 
+    # The floating IP keepalived keeps on whichever bind9 is up (LAB-117), so this only fails with both down.
+    # Checked every minute: with both down the lab has no internal DNS
+    - name: DNS
+      <<: *internal
+      group: "4. Services"
+      interval: 1m
+      url: "192.168.1.153"
+      dns:
+        query-name: pve01.homelab.local
+        query-type: A
+      conditions:
+        - "[DNS_RCODE] == NOERROR"
+        - "[BODY] == 192.168.1.250"
+
     - name: PostgreSQL
       <<: *internal
       group: "4. Services"
