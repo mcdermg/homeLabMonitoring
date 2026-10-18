@@ -164,10 +164,17 @@ endpoints:
       group: "4. Services"
       url: icmp://192.168.1.113
 
+    # A real query, not a ping: a frozen container still answers pings (LAB-110)
     - name: Bind9
       <<: *internal
       group: "4. Services"
-      url: icmp://192.168.1.115
+      url: "192.168.1.115"
+      dns:
+        query-name: pve01.homelab.local
+        query-type: A
+      conditions:
+        - "[DNS_RCODE] == NOERROR"
+        - "[BODY] == 192.168.1.250"
 
     - name: PostgreSQL
       <<: *internal
@@ -207,3 +214,11 @@ endpoints:
         - "[RESPONSE_TIME] < 1000"
         - "[BODY] == Prometheus is Healthy."
 
+    # Catches a k3s Alertmanager that's up but can't alert, from outside the cluster (LAB-124)
+    - name: Alertmanager-service
+      <<: *internal
+      group: "4. Services"
+      url: "http://192.168.1.16/-/healthy"
+      conditions:
+        - "[STATUS] == 200"
+        - "[RESPONSE_TIME] < 1000"
