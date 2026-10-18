@@ -9,6 +9,11 @@ repos:
       - id: check-merge-conflict
       - id: detect-private-key
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
   - repo: https://github.com/ansible/ansible-lint
     rev: v26.10.1
     hooks:

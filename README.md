@@ -6,6 +6,9 @@ This will update apt, populate packages and then install Prometheus & associated
 ## Config
 At the minute the configs are fairly static. Scrape targets are set in the templates; `vars.yaml` (encrypted via Ansible-vault) only holds the Slack hooks, scrape/evaluation intervals and the rule file name.
 
+### Pre-commit
+Hooks are in `.pre-commit-config.yaml` (YAML checks, ansible-lint, gitleaks). Set up once with `pre-commit install`.
+
 ### Target single Hosts
 Via ansible:
 
