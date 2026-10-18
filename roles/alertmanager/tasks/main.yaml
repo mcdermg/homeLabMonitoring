@@ -25,6 +25,14 @@
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
         (force_alert_config | bool)
 
+# Prometheus evaluates the rules, not Alertmanager, so it has to reread alert.yml
+- name: Reload Prometheus to pick up the alert rules
+  ansible.builtin.service:
+    name: prometheus
+    state: reloaded
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config | bool)
+
 - name: Add message template config
   ansible.builtin.copy:
     src: notifications.tmpl
