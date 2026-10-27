@@ -207,7 +207,7 @@ endpoints:
       <<: *defaults
       group: "5. External"
       conditions:
-        - '[RESPONSE_TIME] < 4000' # Some issue on the zero with the inital connections being very latent
+        - '[RESPONSE_TIME] < 4000' # Some issue on the monitoring Pi with the inital connections being very latent
       url: https://www.garymcdermott.net
 
     - name: Grafana-service

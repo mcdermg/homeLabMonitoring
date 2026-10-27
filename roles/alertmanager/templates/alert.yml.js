@@ -1,8 +1,8 @@
-# The Zero only alerts on what the k3s cluster can't see: itself and the ISP (LAB-122, LAB-125).
+# The monitoring Pi only alerts on what the k3s cluster can't see: itself and the ISP (LAB-122, LAB-125).
 # Lab hosts belong to Gatus (up/down), the k3s Alertmanager (resources) and Pulse (Proxmox detail);
 # the pi-nodes scrape stays for history and Grafana
 groups:
-- name: Zero
+- name: Monitoring
   rules:
   - alert: 'Low data disk space'
     expr: ceil(((node_filesystem_size_bytes{job="node",mountpoint!="/boot"} - node_filesystem_free_bytes{job="node",mountpoint!="/boot"}) / node_filesystem_size_bytes{job="node",mountpoint!="/boot"} * 100)) > 95
