@@ -68,67 +68,67 @@ endpoints:
 
     - name: PVE01
       <<: *internal
-      group: "2. Proxmox"
+      group: "3. Proxmox"
       url: icmp://192.168.1.250
 
     - name: PVE02
       <<: *internal
-      group: "2. Proxmox"
+      group: "3. Proxmox"
       url: icmp://192.168.1.251
 
     - name: Control - Pi4
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.241
 
     - name: Control - k3s 01
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.210
 
     - name: Control - k3s 02
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.211
 
     - name: Worker - Pi3
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.242
 
     - name: Worker - k3s 01
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.215
 
     - name: Worker - k3s 02
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.216
 
     - name: Worker - k3s 03
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.217
 
     - name: Worker - k3s 04
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.218
 
     - name: Worker - k3s 05
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.219
 
     - name: Worker - k3s 06
       <<: *internal
-      group: "3. Cluster"
+      group: "4. Cluster"
       url: icmp://192.168.1.220
 
     - name: k8status
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.11/"
       conditions:
         - "[STATUS] == 200"
@@ -136,7 +136,7 @@ endpoints:
 
     - name: Nginx Web Server
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.12/"
       conditions:
         - "[STATUS] == 200"
@@ -144,7 +144,7 @@ endpoints:
 
     - name: LibreSpeed
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.111:8080/"
       conditions:
         - "[STATUS] == 200"
@@ -152,7 +152,7 @@ endpoints:
 
     - name: Pulse
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.112:7655/api/health"
       conditions:
         - "[STATUS] == 200"
@@ -162,7 +162,7 @@ endpoints:
     # Each tunnel replica's /ready, not a ping: it fails when the tunnel has no live connections to Cloudflare
     - name: Cloudflared-01
       <<: *internal
-      group: "4. Services"
+      group: "2. Network services"
       url: "http://192.168.1.113:20241/ready"
       conditions:
         - "[STATUS] == 200"
@@ -170,7 +170,7 @@ endpoints:
 
     - name: Cloudflared-02
       <<: *internal
-      group: "4. Services"
+      group: "2. Network services"
       url: "http://192.168.1.118:20241/ready"
       conditions:
         - "[STATUS] == 200"
@@ -179,7 +179,7 @@ endpoints:
     # A real query, not a ping: a frozen container still answers pings (LAB-110)
     - name: Bind9-01
       <<: *internal
-      group: "4. Services"
+      group: "2. Network services"
       url: "192.168.1.115"
       dns:
         query-name: pve01.homelab.local
@@ -190,7 +190,7 @@ endpoints:
 
     - name: Bind9-02
       <<: *internal
-      group: "4. Services"
+      group: "2. Network services"
       url: "192.168.1.119"
       dns:
         query-name: pve01.homelab.local
@@ -203,7 +203,7 @@ endpoints:
     # Checked every minute: with both down the lab has no internal DNS
     - name: DNS
       <<: *internal
-      group: "4. Services"
+      group: "2. Network services"
       interval: 1m
       url: "192.168.1.153"
       dns:
@@ -215,12 +215,12 @@ endpoints:
 
     - name: PostgreSQL
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: icmp://192.168.1.116
 
     - name: Gitea
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.117/"
       conditions:
         - "[STATUS] == 200"
@@ -228,14 +228,14 @@ endpoints:
 
     - name: garymcdermott
       <<: *defaults
-      group: "5. External"
+      group: "6. External"
       conditions:
         - '[RESPONSE_TIME] < 4000' # Some issue on the monitoring Pi with the inital connections being very latent
       url: https://www.garymcdermott.net
 
     - name: Grafana-service
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.14/api/health"
       conditions:
         - "[STATUS] == 200"
@@ -244,7 +244,7 @@ endpoints:
 
     - name: Prometheus-service
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.15/-/healthy"
       conditions:
         - "[STATUS] == 200"
@@ -254,7 +254,7 @@ endpoints:
     # Catches a k3s Alertmanager that's up but can't alert, from outside the cluster (LAB-124)
     - name: Alertmanager-service
       <<: *internal
-      group: "4. Services"
+      group: "5. Services"
       url: "http://192.168.1.16/-/healthy"
       conditions:
         - "[STATUS] == 200"
