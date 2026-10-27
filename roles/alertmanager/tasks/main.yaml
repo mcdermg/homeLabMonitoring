@@ -43,6 +43,15 @@
   when: ("prometheus-alertmanager" not in ansible_facts.packages) or
         (force_alert_config | bool)
 
+# Single instance, so no gossip mesh: with it on, a boot before eth0 has an IP fails with "no private IP found" (LAB-192)
+- name: Disable Alertmanager clustering
+  ansible.builtin.lineinfile:
+    path: /etc/default/prometheus-alertmanager
+    regexp: '^ARGS='
+    line: 'ARGS="--cluster.listen-address="'
+  when: ("prometheus-alertmanager" not in ansible_facts.packages) or
+        (force_alert_config | bool)
+
 - name: Enable alertmanager service
   ansible.builtin.service:
     name: prometheus-alertmanager
