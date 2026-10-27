@@ -159,16 +159,39 @@ endpoints:
         - "[RESPONSE_TIME] < 1000"
         - "[BODY].status == healthy"
 
-    - name: Cloudflared
+    # Each tunnel replica's /ready, not a ping: it fails when the tunnel has no live connections to Cloudflare
+    - name: Cloudflared-01
       <<: *internal
       group: "4. Services"
-      url: icmp://192.168.1.113
+      url: "http://192.168.1.113:20241/ready"
+      conditions:
+        - "[STATUS] == 200"
+        - "[BODY].readyConnections > 0"
+
+    - name: Cloudflared-02
+      <<: *internal
+      group: "4. Services"
+      url: "http://192.168.1.118:20241/ready"
+      conditions:
+        - "[STATUS] == 200"
+        - "[BODY].readyConnections > 0"
 
     # A real query, not a ping: a frozen container still answers pings (LAB-110)
-    - name: Bind9
+    - name: Bind9-01
       <<: *internal
       group: "4. Services"
       url: "192.168.1.115"
+      dns:
+        query-name: pve01.homelab.local
+        query-type: A
+      conditions:
+        - "[DNS_RCODE] == NOERROR"
+        - "[BODY] == 192.168.1.250"
+
+    - name: Bind9-02
+      <<: *internal
+      group: "4. Services"
+      url: "192.168.1.119"
       dns:
         query-name: pve01.homelab.local
         query-type: A
@@ -226,7 +249,7 @@ endpoints:
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 1000"
-        - "[BODY] == Prometheus is Healthy."
+        - "[BODY] == Prometheus Server is Healthy."
 
     # Catches a k3s Alertmanager that's up but can't alert, from outside the cluster (LAB-124)
     - name: Alertmanager-service
