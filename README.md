@@ -13,13 +13,13 @@ Hooks are in `.pre-commit-config.yaml` (YAML checks, ansible-lint, gitleaks). Se
 Via ansible:
 
 ``` bash
-ansible-playbook playbook.yaml --limit zero-2
+ansible-playbook playbook.yaml --limit monitoring
 ```
 
 Or if you want to only run a specific role you can also target tags.
 
 ``` bash
-ansible-playbook playbook.yaml --limit zero-2 --tags "gatus"
+ansible-playbook playbook.yaml --limit monitoring --tags "gatus"
 ```
 
 ### Force config
@@ -58,7 +58,7 @@ The Zero reaches the lab through its `trusted_devices` entry in the `mikrotik-ha
 To push a config change:
 
 ``` bash
-ansible-playbook playbook.yaml --limit zero-2 --tags prometheus -e force_prom_config=true
+ansible-playbook playbook.yaml --limit monitoring --tags prometheus -e force_prom_config=true
 ```
 
 ## Alerts
@@ -79,7 +79,7 @@ Lab hosts are covered elsewhere: Gatus (up/down), the k3s Alertmanager (CPU, mem
 To push a rule change (the role also reloads Prometheus, which evaluates the rules):
 
 ``` bash
-ansible-playbook playbook.yaml --limit zero-2 --tags alertmanager -e force_alert_config=true
+ansible-playbook playbook.yaml --limit monitoring --tags alertmanager -e force_alert_config=true
 ```
 
 ## Gatus
