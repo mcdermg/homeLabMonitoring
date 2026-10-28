@@ -101,6 +101,8 @@ Gatus can't report its own death, so two [healthchecks.io](https://healthchecks.
 - **Gatus**: a Gatus endpoint requests `HC_GATUS_PING_URL`. It stops if Gatus dies or hangs.
 - **Pi**: the `heartbeat` role adds a cron job for the `pi` user that requests `HC_PI_PING_URL`. It stops if the Pi, power or ISP goes down.
 
+Check their status at [healthchecks.io](https://healthchecks.io/accounts/login/). It still works when the Pi is down.
+
 Both URLs live in the encrypted `vars.yaml`, as anyone with a ping URL can mark the check up. The interval is `heartbeat_interval` in `playbook.yaml` (minutes) and must match the period set on healthchecks.io.
 
 ## SSH
