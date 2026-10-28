@@ -94,6 +94,15 @@ Gatus is the status dashboard, served on port 80 of the monitoring Pi. It checks
 
 To push a config change, set `force_gatus_config: true` and run the playbook with `--tags "gatus"`.
 
+## Heartbeat
+
+Gatus can't report its own death, so two [healthchecks.io](https://healthchecks.io) checks act as a dead man's switch and alert Slack when their pings stop:
+
+- **Gatus**: a Gatus endpoint requests `HC_GATUS_PING_URL`. It stops if Gatus dies or hangs.
+- **Pi**: the `heartbeat` role adds a cron job for the `pi` user that requests `HC_PI_PING_URL`. It stops if the Pi, power or ISP goes down.
+
+Both URLs live in the encrypted `vars.yaml`, as anyone with a ping URL can mark the check up. The interval is `heartbeat_interval` in `playbook.yaml` (minutes) and must match the period set on healthchecks.io.
+
 ## SSH
 
 The `ssh` role moves sshd to port 2222. The Proxmox nodes use 2222 as their default SSH port, and `pvecm qdevice setup` has no port option, so the monitoring Pi has to match to act as the QDevice. The playbook checks whether 2222 is open before gathering facts and connects on 22 if it isn't, so the same command works on a fresh Pi and after the move. Don't pass `-e ansible_port=...`: extra vars override that check.

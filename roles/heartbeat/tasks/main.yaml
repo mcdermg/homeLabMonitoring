@@ -1,0 +1,8 @@
+---
+# Dead man's switch for the Pi itself: healthchecks.io alerts if the pings stop (Pi, power or ISP down)
+- name: Ping healthchecks.io from cron
+  ansible.builtin.cron:
+    name: healthchecks heartbeat
+    user: pi
+    minute: "*/{{ heartbeat_interval }}"
+    job: "curl -fsS -m 10 --retry 3 -o /dev/null {{ HC_PI_PING_URL }}"

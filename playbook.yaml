@@ -7,6 +7,8 @@
     force_prom_config: false
     force_alert_config: false
     force_gatus_config: false
+    # Minutes between healthchecks.io pings from Gatus and the Pi cron; must match the checks' period
+    heartbeat_interval: 10
   vars_files:
     - vars.yaml
 
@@ -39,3 +41,4 @@
     - { role: alertmanager, tags: alertmanager }
     - { role: gatus, tags: gatus }
     - { role: ssh, tags: ssh }
+    - { role: heartbeat, tags: heartbeat }

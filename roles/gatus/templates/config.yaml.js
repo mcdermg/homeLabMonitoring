@@ -233,6 +233,15 @@ endpoints:
         - '[RESPONSE_TIME] < 4000' # Some issue on the monitoring Pi with the inital connections being very latent
       url: https://www.garymcdermott.net
 
+    # Dead man's switch: healthchecks.io alerts if these pings stop, so a dead Gatus still gets reported.
+    # No alert here: if this fails the internet is down and Slack is unreachable anyway.
+    - name: Healthchecks heartbeat
+      group: "6. External"
+      url: "{{ HC_GATUS_PING_URL }}"
+      interval: {{ heartbeat_interval }}m
+      conditions:
+        - "[STATUS] == 200"
+
     - name: Grafana-service
       <<: *internal
       group: "5. Services"
